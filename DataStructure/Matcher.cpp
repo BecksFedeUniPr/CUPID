@@ -10,12 +10,33 @@ std::string toLower(const std::string& str) {
     return lowerStr;
 }
 
+bool shouldSplit(char c, const std::string& current) {
+    // Spezza quando trova maiuscola (se current non è vuoto) o underscore
+    return (std::isupper(c) && !current.empty()) || c == '_';
+}
+
 std::set<std::string> tokenize(const std::string& str) {
     std::set<std::string> tokens;
     std::istringstream stream(str);
     std::string token;
     while (stream >> token) { //legge parola per parola
-        tokens.insert(toLower(token));
+        std::string current = "";
+        for (size_t i = 0; i < token.size(); ++i) {
+            if (shouldSplit(token[i], current)) {
+                // per evitare token vuoti
+                if (!current.empty()) {
+                    tokens.insert(toLower(current));
+                }
+                // Inizia nuovo token
+                current = (token[i] == '_') ? "" : std::string(1, token[i]);
+            } else {
+                // aggiunge carattere al token corrente
+                current += token[i];
+            }
+        }
+        if (!current.empty()) {
+            tokens.insert(toLower(current));
+        }
     }
     return tokens;
 }
@@ -34,5 +55,5 @@ double calculateLinguisticSimilarity(const std::string& name1, const std::string
     }
 
     int unionCount = tokens1.size() + tokens2.size() - intersectionCount;
-    return static_cast<double>(intersectionCount);;
+    return (double)intersectionCount / unionCount;
 }
