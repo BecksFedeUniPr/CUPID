@@ -41,9 +41,9 @@ std::set<std::string> tokenize(const std::string& str) {
     return tokens;
 }
 
-double calculateLinguisticSimilarity(const std::string& name1, const std::string& name2) {
-    auto tokens1 = tokenize(name1);
-    auto tokens2 = tokenize(name2);
+double calculateLinguisticSimilarity(const Node& name1, const Node& name2) {
+    auto tokens1 = tokenize(name1.getName());
+    auto tokens2 = tokenize(name2.getName());
 
     if (tokens1.empty() || tokens2.empty()) return 0.0;
 
@@ -56,4 +56,11 @@ double calculateLinguisticSimilarity(const std::string& name1, const std::string
 
     int unionCount = tokens1.size() + tokens2.size() - intersectionCount;
     return (double)intersectionCount / unionCount;
+}
+
+double calculateStructuralSimilarity(const Node& struct1, const Node& struct2) {
+
+    // 3. Media: Somma dei match migliori / Numero di figli
+    // Nota: Questa è una semplificazione. CUPID usa formule più complesse per penalizzare figli non matchati.
+    return sumBestMatches / std::max((size_t)1, struct1.children.size());
 }
